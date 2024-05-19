@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+    integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whack-a-Mole Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .game_container {
+            height: 100vh;
+            font-family: 'Montserrat', sans-serif;
+            /* background: linear-gradient(to right, rgb(174, 220, 232), rgb(3, 255, 230), rgb(174, 220, 232)); */
+            background: url(https://static.virtubox.io/project/file/20240301-064626-mue1-2_1.png);
+            background-size: cover;
+            color: #fff;
+        }
+
+        .timer_1,
+        .score_1 {
+            font-size: 2em;
+            margin-bottom: 0.5em;
+            text-align: center;
+            width: 100%;
+        }
+
+        .board_1 {
+            min-height: 50vmin;
+            width: 50vmin;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 2em;
+            overflow: auto;
+            font-size: 1rem;
+            position: relative;
+        }
+
+        .hole_css {
+            background-color: rgb(165, 85, 11);
+            border-radius: 50%;
+            box-shadow: inset 0 10px 0 7px rgb(53, 21, 6), inset 0 20px 20px 15px rgba(0, 0, 0, .3), 0 0 5px rgba(0, 0, 0, .5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hole_css .mole_1 {
+            width: 70%;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 0;
+            animation: rise 0.3s ease-out;
+        }
+
+        @keyframes rise {
+            0% {
+                transform: translateX(-50%) translateY(100%);
+            }
+
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .detail_1 {
+            background: linear-gradient(to right, rgb(255, 255, 255), rgb(10, 223, 202), rgb(255, 255, 255));
+            border-radius: 8px;
+            width: 70vw;
+            height: 10vh;
+            color: black;
+            margin-bottom: 20vh;
+        }
+
+        .secContainer {
+            margin-bottom: 10vh;
+        }
+
+        .retry-btn_1 {
+            border: 1px solid #00c3ff;
+            border-radius: 8px;
+            background: transparent;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2em;
+            font-weight: bold;
+
+        }
+
+        .retry-btn_1:hover {
+            background-color: rgb(3, 255, 230);
+            cursor: pointer;
+        }
+
+        .left-div {
+            width: 20rem;
+            height: 15rem;
+            font-size: 1.25em;
+            color: #ff0000;
+        }
+
+        .left-div p {
+            animation: blink 1s linear infinite;
+            align-items: center;
+            font-size: 1.25em;
+            color: #ff0000;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0.4;
+                border-color: #ff0000;
+            }
+        }
+
+        .right-div {
+            width: 20rem;
+            height: 15rem;
+            font-size: 2.25em;
+            color: #000000;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        p {
+            margin-bottom: 0 !important;
+        }
+
+        @media screen and (max-width: 730px) {
+            .detail_1 {
+                position: absolute;
+                width: 90vw;
+                height: 8vh;
+                top: 5%;
+                /* margin-bottom: 80vh; */
+            }
+
+            .secContainer {
+                margin-bottom: 0vh;
+                flex-direction: column;
+            }
+        }
+
+        @media screen and (min-width: 730px) {
+            .right-div {
+                margin-left: 2vw;
+            }
+
+            .left-div {
+                margin-right: 2vw
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="game_container d-flex flex-column justify-content-center align-items-center">
+        <div class="detail_1 d-flex flex-row justify-content-around align-items-center">
+            <p class="timer_1 col-4">TIME: <span id="timer_1">15s</span></p>
+            <p class="score_1 col-4">SCORE: <span id="score_1">0</span></p>
+            <button class="retry-btn_1 col-3" onclick="resetGame()">RETRY</button>
+        </div>
+        <div class="secContainer d-flex justify-content-between align-items-center">
+            <div class="left-div d-flex flex-column justify-content-center align-items-center" id="stmess"
+                onclick="firstClickBeforeStarting()">
+                <p>Click here to Start</p>
+                <div class="scmess"></div>
+            </div>
+            <div class="board_1" id="board_1">
+            </div>
+            <div class="right-div d-flex flex-column justify-content-center align-items-center" id="high_Score"></div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js"></script>
+    <script>
+        var hole_1 = '';
+        for (var i = 0; i < 9; i++) {
+            hole_1 = hole_1 + `<div class = "hole_css"></div>`;
+        }
+        document.getElementById("board_1").innerHTML = hole_1;
+        var cursor = document.querySelector('.cursor_1')
+        var holes = [...document.querySelectorAll('.hole_css')]
+        var scoreEl = document.querySelector('#score_1')
+        var timerEl = document.querySelector('#timer_1')
+        let disableClick = true; // flag for click event on board
+        let score = 0
+        const sound = new Audio("https://static.virtubox.io/project/file/20240221-114548-qfrs-smash.mp3")
+        let timer_i
+        var timerInterval;
+        //disableClick = false;
+        score = 0
+        let maxTime = 15;
+        let timer = maxTime;
+        let highScore = 0;
+        let firstClick = true;
+        let arr = [100, 300, 500, 700, 900]
+        let arr1 = [600, 800, 1000, 1200, 1400, 1600, 1800]
+        function whacking(img) {
+            if (!disableClick) {
+                score += 10;
+                sound.play();
+                scoreEl.textContent = score;
+                img.src = 'https://static.virtubox.io/project/file/20240221-114120-z6y4-mole-whacked.png';
+                clearTimeout(timer_i);
+                const hole = img.parentNode;
+                setTimeout(() => {
+                    hole.removeChild(img);
+                    run();
+                }, 50);
+            }
+        }
+
+        function run() {
+            const moleImages = document.querySelectorAll('.mole_1');
+            if (moleImages.length === 0) {
+                const holes = [...document.querySelectorAll('.hole_css')];
+                const i = Math.floor(Math.random() * holes.length);
+                const hole = holes[i];
+                timer_i = null;
+                arr.sort(() => (Math.random() > 0.5 ? 1 : -1));
+                arr1.sort(() => (Math.random() > 0.5 ? 1 : -1));
+                const img = document.createElement('img');
+                img.classList.add('mole_1');
+                img.src = 'https://static.virtubox.io/project/file/20240226-043203-ty4z-mole_1.png';
+                img.setAttribute("onclick", `whacking(this)`);
+                hole.appendChild(img);
+                timer_i = setTimeout(() => {
+                    hole.removeChild(img);
+                    run();
+                }, arr1[1]);
+            }
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timer--
+                timerEl.textContent = `${timer}s`
+                if (timer === 0) {
+                    clearInterval(timerInterval)
+                    document.getElementById('stmess').classList.toggle("d-none");
+                    document.getElementById('stmess').classList.toggle("d-flex");
+                    document.getElementById('high_Score').classList.toggle("d-none");
+                    document.getElementById('high_Score').classList.toggle("d-flex");
+                    document.getElementById('stmess').innerHTML = `<div style="text-align: center;"><h3>Game Over!</h3><br/><p>Your score is: ${score}.</p> <p>Click Retry to Play Again.</p></div>`;
+                    disableClick = true;
+                    if (score > highScore) {
+                        highScore = score;
+                        localStorage.setItem("highScore", highScore);
+                        highScore = localStorage.getItem('highScore');
+                        document.querySelector(".right-div").textContent = "High Score: " + highScore;
+                    }
+                }
+            }, 1000)
+        }
+        function firstClickBeforeStarting() {
+            if (firstClick) {
+                startTimer();
+                document.getElementById('stmess').classList.toggle("d-flex");
+                document.getElementById('stmess').classList.toggle("d-none");
+                document.getElementById('high_Score').classList.toggle("d-none");
+                document.getElementById('high_Score').classList.toggle("d-flex");
+                firstClick = false;
+                disableClick = false;
+                run();
+            }
+        }
+        function resetGame() {
+            clearInterval(timerInterval)
+            clearMole();
+            if (document.getElementById('stmess').classList.contains("d-flex")) {
+                document.getElementById('stmess').classList.toggle("d-none");
+                document.getElementById('stmess').classList.toggle("d-flex");
+                document.getElementById('high_Score').classList.toggle("d-none");
+                document.getElementById('high_Score').classList.toggle("d-flex");
+            }
+            hole_1 = '';
+            for (var i = 0; i < 9; i++) {
+                hole_1 = hole_1 + `<div class = "hole_css"></div>`;
+            }
+            document.getElementById("board_1").innerHTML = hole_1;
+            cursor = document.querySelector('.cursor_1')
+            holes = [...document.querySelectorAll('.hole_css')]
+            scoreEl = document.querySelector('#score_1')
+            timerEl = document.querySelector('#timer_1')
+            disableClick = false;
+            score = 0;
+            timer = maxTime;
+            highScore = 0;
+            scoreEl.textContent = score;
+            timerEl.textContent = `${timer}s`;
+            startTimer()
+            if (localStorage.getItem('highScore')) {
+                highScore = localStorage.getItem('highScore');
+            } else {
+                highScore = 0;
+            }
+            document.querySelector(".right-div").textContent = "High Score: " + highScore;
+            run()
+            function clearMole() {
+                const moleImages = document.querySelectorAll('.mole_1');
+                moleImages.forEach(img => {
+                    img.src = ''; // Clear the src attribute
+                });
+            }
+        }
+        if (localStorage.getItem('highScore')) {
+            highScore = localStorage.getItem('highScore');
+        } else {
+            highScore = 0;
+        }
+        document.querySelector(".right-div").textContent = "High Score: " + highScore;
+        run()
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/x-icon" href="https://i.ibb.co/Qm4FKHh/connect-four.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect Four</title>
+
+    <style>
+        * {
+            margin: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .body1_2 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background: url(https://static.virtubox.io/project/file/20240304-114812-tvdu-4238568.jpg);
+            background-size: cover;
+        }
+
+        .connect4 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .board1_2 {
+            min-height: 60vmin;
+            width: 70vmin;
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            grid-template-rows: repeat(6, 1fr);
+            gap: 1em;
+            background: radial-gradient(rgb(60, 60, 255), rgb(255 47 255 / 60%));
+            padding: 1em;
+            border-radius: 5%;
+            border-style: solid;
+            border-top: none;
+            position: relative;
+        }
+
+        .cell {
+            height: 100%;
+            width: 100%;
+            border-radius: 50%;
+            background-color: #000000;
+            /* background-color: #ecf0f1; */
+            cursor: pointer;
+        }
+
+        .player1 {
+            background-color: #e74c3c;
+        }
+
+        .player2 {
+            background-color: #fbff05;
+        }
+
+        .drop1 {
+            background-color: #e74c3c;
+            animation: fallAnimation 0.001s ease-out 0.01s;
+            transition: background-color 0.1s ease;
+        }
+
+        .drop2 {
+            background-color: #fbff05;
+            animation: fallAnimation 0.001s ease-out 0.01s;
+            transition: background-color 0.1s ease;
+        }
+
+        @keyframes fallAnimation {
+            0% {
+                transform: translateY(-100%);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        #resetBtn1_2 {
+            margin-top: 1.5em;
+            font-weight: bold;
+            color: black;
+            background: linear-gradient(rgb(60, 60, 255), rgb(255, 47, 255));
+            border: none;
+            border-radius: 5px;
+            padding: 0.5em;
+            cursor: pointer;
+        }
+
+        #resetBtn1_2:hover {
+            background: rgb(138, 138, 255);
+        }
+
+        .plyrturn {
+            margin-bottom: 0.5em;
+            font-size: xx-large;
+            text-align: center;
+            color: cornsilk;
+        }
+
+        .plyrColor {
+            width: 20vmin;
+            height: 1.75em;
+            margin-top: 0.125em;
+            background-color: #e74c3c;
+            border-radius: 20px;
+            margin-bottom: 1em;
+        }
+
+        .player-text {
+            color: white;
+            font-size: large;
+            padding-left: 2em;
+            padding-right: 2em;
+            white-space: nowrap;
+        }
+
+        #player1 {
+            transform: rotate(90deg);
+            left: 5%;
+        }
+
+        #player2 {
+            transform: rotate(-90deg);
+            right: 5%;
+
+        }
+
+        .winner-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .winner-text {
+            color: white;
+            font-size: 2em;
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8),
+                0 0 20px rgba(255, 255, 255, 0.8),
+                0 0 30px rgba(255, 255, 255, 0.8);
+            animation: neonAnimation 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes neonAnimation {
+            from {
+                text-shadow: 0 0 10px rgba(255, 255, 255, 0.8),
+                    0 0 20px rgba(255, 255, 255, 0.8),
+                    0 0 30px rgba(255, 255, 255, 0.8);
+            }
+
+            to {
+                text-shadow: 0 0 20px rgba(255, 255, 255, 0.8),
+                    0 0 30px rgba(255, 255, 255, 0.8),
+                    0 0 40px rgba(255, 255, 255, 0.8);
+            }
+        }
+
+        @keyframes neonAnimation1 {
+            from {
+                box-shadow: 0 0 10px #e74c3c,
+                    0 0 20px #e74c3c,
+                    0 0 30px #e74c3c;
+            }
+
+            to {
+                box-shadow: 0 0 20px #e74c3c,
+                    0 0 30px #e74c3c,
+                    0 0 40px #e74c3c;
+            }
+        }
+
+        @keyframes neonAnimation2 {
+            from {
+                box-shadow: 0 0 10px #fbff05,
+                    0 0 20px #fbff05,
+                    0 0 30px #fbff05;
+            }
+
+            to {
+                box-shadow: 0 0 20px #fbff05,
+                    0 0 30px #fbff05,
+                    0 0 40px #fbff05;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="body1_2">
+        <div class="player-text" id="player1">Player 1</div>
+        <div class="connect4">
+            <div class="plyrturn" id="plyrturn"></div>
+            <div class="plyrColor" id="plyrColor"></div>
+            <div class="board1_2" id="board1_2"></div>
+            <button onclick="resetGame()" id="resetBtn1_2">Reset Game</button>
+        </div>
+        <div class="player-text" id="player2">Player 2</div>
+    </div>
+    <script>
+        const plyrSide = document.querySelector(".connect4")
+        const board = document.getElementById("board1_2");
+        const resetButton = document.querySelector("button");
+        const result = document.querySelector("#plyrturn");
+        const clrbox = document.getElementById("plyrColor")
+        const plyrText1 = document.querySelector("#player1");
+        const plyrText2 = document.querySelector("#player2");
+        const ROWS = 6;
+        const COLS = 7;
+        let firstClick = true;
+        let gameWon = false;
+        let currentPlayer = 1;
+        let gameBoard = [];
+        let timer;
+        const moveTimeout = 20000;
+        let screenWidth = screen.width;
+        let screenHeight = screen.height;
+        let screenRatio = screenHeight / screenWidth;
+        //screenRatio<1 = Horizontal screen ; screenRatio>1 = Vertical screen
+        function createBoard() {
+            for (let row = 0; row < ROWS; row++) {
+                gameBoard[row] = [];
+                for (let col = 0; col < COLS; col++) {
+                    const cell = document.createElement("div");
+                    cell.classList.add("cell");
+                    cell.setAttribute("data-row", row);
+                    cell.setAttribute("data-col", col);
+                    cell.addEventListener("click", handleMove);
+                    board.appendChild(cell);
+                    gameBoard[row][col] = 0;
+                }
+            }
+        }
+        function togglePlayerText() {
+            if (currentPlayer === 1) {
+                plyrText1.style.fontSize = "xx-large";
+                plyrText2.style.fontSize = "medium";
+
+            } else {
+                plyrText1.style.fontSize = "medium";
+                plyrText2.style.fontSize = "xx-large";
+            }
+        }
+        function updateConnect4Position() {
+            if (currentPlayer === 1) {
+                plyrSide.style.marginLeft = '0';
+                plyrSide.style.marginRight = 'auto';
+            } else {
+                plyrSide.style.marginLeft = 'auto';
+                plyrSide.style.marginRight = '0';
+            }
+        }
+        function animateDrop(row, col) {
+            const cell_1 = [...document.querySelectorAll(`[data-col="${col}"]`)];
+            const dropClass = `drop${currentPlayer}`;
+            let i = 0;
+
+            function dropToken() {
+                if (i < row + 1) {
+                    cell_1[i].classList.add(dropClass);
+                    if (i > 0) {
+                        cell_1[i - 1].classList.remove(dropClass);
+                    }
+                    i++;
+                    setTimeout(dropToken, 100);
+                }
+            }
+            dropToken();
+        }
+        function showWinnerOverlay(winner) {
+            const winnerOverlay = document.createElement("div");
+            winnerOverlay.classList.add("winner-overlay");
+
+            const winnerText = document.createElement("div");
+            winnerText.classList.add("winner-text");
+            winnerText.textContent = `Player ${winner} wins!`;
+
+            winnerOverlay.appendChild(winnerText);
+            document.body.appendChild(winnerOverlay);
+
+            setTimeout(() => {
+                winnerOverlay.remove();
+            }, 5000);
+        }
+        function handleMove(event) {
+            if (gameWon) {
+                return;
+            }
+
+            const col = parseInt(event.target.dataset.col);
+            const row = getEmptyRow(col);
+            if (row !== -1) {
+                const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+                gameBoard[row][col] = currentPlayer;
+                plyrSide.classList.add(`body${currentPlayer}`);
+                animateDrop(row, col);
+                setTimeout(() => {
+                    cell.classList.add(`player${3 - currentPlayer}`)
+
+                }, row * 100)
+                gameBoard[row][col] = currentPlayer;
+                if (checkWin(row, col)) {
+                    gameWon = true;
+                    clearTimeout(timer);
+                    clrbox.style.backgroundColor = (currentPlayer === 1) ? '#e74c3c' : '#fbff05';
+                    clrbox.style.animation = (currentPlayer === 1) ? 'neonAnimation1 1.5s ease-in-out infinite alternate' : 'neonAnimation2 1.5s ease-in-out infinite alternate';
+                    result.textContent = `Player ${currentPlayer} wins!`;
+                    showWinnerOverlay(currentPlayer);
+                    return;
+                }
+                if (checkDraw()) {
+                    gameWon = true;
+                    clearTimeout(timer);
+                    result.textContent = "It's a draw!";
+                    return;
+                }
+                currentPlayer = 3 - currentPlayer;
+                if (firstClick) {
+                    updateTurnDisplay();
+                    if (screenRatio < 1) {
+                        togglePlayerText();
+                    }
+                    clearTimeout(timer);
+                    startTimer();
+                    if (screenRatio < 1) {
+                        updateConnect4Position();
+                    }
+                    clrbox.style.backgroundColor = (currentPlayer === 1) ? '#e74c3c' : '#fbff05';
+                }
+                else {
+                    setTimeout(() => {
+                        updateTurnDisplay();
+                        if (screenRatio < 1) {
+                            togglePlayerText();
+                        }
+                        clearTimeout(timer);
+                        startTimer();
+                        if (screenRatio < 1) {
+                            updateConnect4Position();
+                        }
+                        clrbox.style.backgroundColor = (currentPlayer === 1) ? '#e74c3c' : '#fbff05';
+
+                    }, row * 130);
+                }
+
+            }
+        }
+        function startTimer() {
+            let remainingTime = 20;
+            result.innerHTML = `(Time left: ${remainingTime} seconds)`;
+            timer = setInterval(() => {
+                remainingTime--;
+                if (remainingTime <= 0) {
+                    result.innerHTML = `Player ${currentPlayer} ran out of time!`;
+                    gameWon = true;
+                    showWinnerOverlay(3 - currentPlayer);
+                    setTimeout(() => {
+                        // resetGame();
+                        clearTimeout(timer);
+                        clrbox.style.backgroundColor = (currentPlayer === 2) ? '#e74c3c' : '#fbff05';
+                        clrbox.style.animation = (currentPlayer === 2) ? 'neonAnimation1 1.5s ease-in-out infinite alternate' : 'neonAnimation2 1.5s ease-in-out infinite alternate';
+                        result.textContent = `Player ${3 - currentPlayer} wins! Reset Game to play again`;
+
+                    }, 5000)
+                } else {
+                    result.innerHTML = `(Time left: ${remainingTime} seconds)`;
+                }
+            }, 1000);
+        }
+        function updateTurnDisplay() {
+            result.innerHTML = `(Time left: 20 seconds)`;
+        }
+        function getEmptyRow(col) {
+            for (let row = ROWS - 1; row >= 0; row--) {
+                if (gameBoard[row][col] === 0) {
+                    return row;
+                }
+            }
+            return -1; // Column is full
+        }
+        function checkWin(row, col) {
+            return (
+                checkDirection(row, col, 0, 1) || // Horizontal
+                checkDirection(row, col, 1, 0) || // Vertical
+                checkDirection(row, col, 1, 1) || // Diagonal /
+                checkDirection(row, col, -1, 1)   // Diagonal \
+            );
+        }
+        function checkDirection(row, col, rowIncrement, colIncrement) {
+            const player = gameBoard[row][col];
+            let count = 1;
+
+            // Check in one direction
+            for (let i = 1; i < 4; i++) {
+                const newRow = row + i * rowIncrement;
+                const newCol = col + i * colIncrement;
+
+                if (newRow >= 0 && newRow < ROWS && newCol >= 0 && newCol < COLS && gameBoard[newRow][newCol] === player) {
+                    count++;
+                } else {
+                    break;
+                }
+            }
+            // Check in the opposite direction
+            for (let i = 1; i < 4; i++) {
+                const newRow = row - i * rowIncrement;
+                const newCol = col - i * colIncrement;
+
+                if (newRow >= 0 && newRow < ROWS && newCol >= 0 && newCol < COLS && gameBoard[newRow][newCol] === player) {
+                    count++;
+                } else {
+                    break;
+                }
+            }
+
+            return count >= 4;
+        }
+        function checkDraw() {
+            for (let col = 0; col < COLS; col++) {
+                if (gameBoard[0][col] === 0) {
+                    return false; // There is an empty cell, the game is not a draw
+                }
+            }
+            return true; // All cells are filled, the game is a draw
+        }
+        function resetGame() {
+            clearTimeout(timer);
+            gameBoard = [];
+            board.innerHTML = "";
+            createBoard();
+            currentPlayer = 1;
+            gameWon = false;
+            updateTurnDisplay();
+            if (screenRatio < 1) {
+                togglePlayerText();
+            }
+            startTimer();
+            clrbox.style.removeProperty("animation")
+            clrbox.style.backgroundColor = (currentPlayer === 1) ? '#e74c3c' : '#fbff05';
+            if (screenRatio < 1) {
+                updateConnect4Position();
+            }
+        }
+        createBoard();
+        window.addEventListener("click", () => {
+            if (firstClick) {
+                firstClick = false;
+                if (screenRatio < 1) {
+                    updateConnect4Position();
+                }
+                updateTurnDisplay();
+                clearTimeout(timer);
+                startTimer();
+                if (screenRatio < 1) {
+                    togglePlayerText();
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

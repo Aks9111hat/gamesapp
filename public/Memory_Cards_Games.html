@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Testing</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .game1_2 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: url(https://static.virtubox.io/project/file/20240229-063012-tzrt-untitled-design-1.png);
+        }
+
+        ::selection {
+            color: #fff;
+            background: #02f1f5;
+        }
+
+        .wrapper1_2 {
+            padding: 15px;
+            border-radius: 25px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+            background: radial-gradient(#acece5, #02f1f5c9);
+        }
+
+        .cards_1_2,
+        .card1_2,
+        .view,
+        .details {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cards_1_2 {
+            height: 350px;
+            width: 350px;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .cards_1_2 .card1_2 {
+            cursor: pointer;
+            list-style: none;
+            user-select: none;
+            position: relative;
+            perspective: 1000px;
+            transform-style: preserve-3d;
+            height: calc(100% / 4 - 14px);
+            width: calc(100% / 4 - 10px);
+        }
+
+        .card1_2.shake {
+            animation: shake 0.35s ease-in-out;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20% {
+                transform: translateX(-13px);
+            }
+
+            40% {
+                transform: translateX(13px);
+            }
+
+            60% {
+                transform: translateX(-8px);
+            }
+
+            80% {
+                transform: translateX(8px);
+            }
+        }
+
+        .cards_1_2 .card1_2 .view {
+            width: 100%;
+            height: 100%;
+            user-select: none;
+            pointer-events: none;
+            position: absolute;
+            background: #fff;
+            border-radius: 25px;
+            backface-visibility: hidden;
+            transition: transform 0.25s linear;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card1_2:hover {
+            border-radius: 25px;
+            outline: #02f1f5 solid 2px;
+        }
+
+        .card1_2 .front-view img {
+            max-width: 17px;
+        }
+
+        .card1_2 .back-view {
+            transform: rotateY(-180deg);
+        }
+
+        .card1_2 .back-view img {
+            max-width: 40px;
+        }
+
+        .card1_2.flip .front-view {
+            transform: rotateY(180deg);
+        }
+
+        .card1_2.flip .back-view {
+            transform: rotateY(0);
+        }
+
+        .details {
+            width: 100%;
+            margin-top: 12px;
+            padding: 1% 6%;
+            border-radius: 7px;
+            background: #fff;
+            height: calc(100% / 4 - 30px);
+            justify-content: space-between;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .details p {
+            font-size: 18px;
+            height: 15px;
+            padding-right: 16px;
+            border-right: 1px solid #ccc;
+        }
+
+        .details p span {
+            margin-left: 8px;
+        }
+
+        .details p b {
+            font-weight: 500;
+        }
+
+        .details button {
+            cursor: pointer;
+            font-size: 14px;
+            color: #02f1f5;
+            border-radius: 4px;
+            padding: 4px 11px;
+            background: #fff;
+            border: 2px solid #02f1f5;
+            transition: 0.3s ease;
+        }
+
+        .details button:hover {
+            color: #fff;
+            background: #02f1f5;
+        }
+
+        @media screen and (max-width: 700px) {
+            .cards_1_2 {
+                height: 350px;
+                width: 350px;
+            }
+
+            .card1_2 .front-view img {
+                max-width: 16px;
+            }
+
+            .card1_2 .back-view img {
+                max-width: 40px;
+            }
+        }
+
+        @media screen and (max-width: 530px) {
+            .cards_1_2 {
+                height: 300px;
+                width: 300px;
+            }
+
+            .card1_2 .back-view img {
+                max-width: 35px;
+            }
+
+            .details {
+                margin-top: 10px;
+                padding: 0 15px;
+                height: calc(100% / 4 - 10px);
+            }
+
+            .details p {
+                height: 15px;
+                font-size: 17px;
+                padding-right: 13px;
+            }
+
+            .details button {
+                font-size: 13px;
+                padding: 5px 10px;
+                border: none;
+                color: #fff;
+                background: #02f1f5;
+            }
+        }
+
+        .text1_2 {
+            width: 32rem;
+        }
+
+        .gmover {
+            color: red;
+            text-align: center;
+            font-size: larger;
+        }
+
+        .gmwon {
+            color: rgb(255, 255, 0);
+            text-align: center;
+            font-size: larger;
+        }
+
+        .whtgmeis {
+            padding-bottom: 2%;
+            font-size: x-large;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+
+        }
+
+        .upwrapper {
+            background: radial-gradient(#acece5, #02f1f5c9);
+            border-radius: 30px;
+            text-align: center;
+            color: #000000;
+            /* height: 35%; */
+        }
+
+        .gmply img {
+            border-radius: 20px;
+        }
+
+        .gmply {
+            padding-bottom: 2%;
+        }
+
+        .text1_2 button {
+            cursor: pointer;
+            font-size: large;
+            color: #02a7aa;
+            border-radius: 8px;
+            padding: 1%;
+            background: #fff;
+            border: 2px solid #02f1f5;
+            transition: 0.3s ease;
+            margin-bottom: 3%;
+            margin-top: 3%;
+            width: 15rem;
+        }
+
+        .text1_2 button:hover {
+            color: #fff;
+            background: #02f1f5;
+        }
+
+        .htoply {
+            text-align: left;
+            font-size: 12px;
+            padding: 1% 5%;
+
+        }
+
+        .htoply p {
+            text-align: left;
+        }
+
+        .text1_2 h2 {
+            padding-top: 2%;
+            padding-bottom: 2%;
+        }
+
+        .whtgmeis h3 {
+            font-family: cursive;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="game1_2">
+        <div class="whtgmeis" id="whtgmeis">
+            <b>
+                <h2 style="font-family: cursive;">Discover identical objects and locate them all to achieve victory.
+                </h2>
+            </b>
+        </div>
+        <div class="upwrapper" id="upwrapper" style="display: block;">
+            <div class="text1_2">
+                <h2>Welcome to the Memory Card Game!</h2>
+                <div class="gmply">
+                    <img src="https://static.virtubox.io/project/file/20240229-070144-35uf-game-page1.png"
+                        alt="Game play image" width="150" height="150" />
+                    <img src="https://static.virtubox.io/project/file/20240229-070115-5ymi-gmeply_icon.png"
+                        alt="Game play image" width="150" height="150" />
+                </div>
+                <div class="htoply">
+                    <h3>How to Play:</h3>
+                    <p>● Click on any card to reveal its symbol.</p>
+                    <p>● Click on a second card to reveal its symbol.</p>
+                    <p> ● If the two cards match, they will stay face up, and you'll have to match all to win </p>
+                    <p> ● If the two cards do not match, they will flip back face down, and you can try again. </p>
+                    <p>● Continue this process until all pairs are matched.</p>
+                </div>
+                <button id="startGame"><b>Start Game</b></button>
+            </div>
+        </div>
+        <div class="wrapper1_2" id="wrapper1_2" style="display: none;">
+            <div class="gmover" id="gmover"></div>
+            <div class="gmwon" id="gmwon"></div>
+            <ul class="cards_1_2" id="cards_1_2">
+            </ul>
+            <div class="details">
+                <p class="time">
+                    Time: <span><b>20</b>s</span>
+                </p>
+                <p class="flips">
+                    Flips: <span><b>0</b></span>
+                </p>
+                <button>Retry</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const timeTag = document.querySelector(".time b"),
+            flipsTag = document.querySelector(".flips b"),
+            refreshBtn = document.querySelector(".details button");
+        const startbtn = document.getElementById("startGame");
+        let maxTime = 45;
+        let timeLeft = maxTime;
+        let flips = 0;
+        let matchedCard = 0;
+        let disableDeck = false;
+        let isPlaying = false;
+        let cardOne, cardTwo, timer;
+        let card = '';
+        let arr1 = ['https://static.virtubox.io/project/file/20240229-093007-wm5a-earth.png',
+            'https://static.virtubox.io/project/file/20240229-093007-o8fq-alien.png',
+            'https://static.virtubox.io/project/file/20240229-093008-nsud-falling-star.png',
+            'https://static.virtubox.io/project/file/20240229-093008-fhkt-moon.png',
+            'https://static.virtubox.io/project/file/20240229-093009-hnsd-planet-1.png',
+            'https://static.virtubox.io/project/file/20240229-093009-kps9-solar-system.png',
+            'https://static.virtubox.io/project/file/20240229-093010-1wbm-sun.png',
+            'https://static.virtubox.io/project/file/20240229-093010-ur9x-ufo.png'];
+        let arr = [0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7];
+        for (var i = 0; i < arr.length; i++) {
+            card = card + ` <li class="card1_2">
+                                <div class="view front-view">
+                                    <img src="https://static.virtubox.io/project/file/20240214-111633-unyd-que_icon.png" alt="icon" />
+                                </div>
+                                <div class="view back-view">
+                                    <img src="" alt="card-img" />
+                                </div>
+                            </li>`
+        }
+        document.getElementById('cards_1_2').innerHTML = card;
+        const cards = document.querySelectorAll(".card1_2")
+        startbtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            document.getElementById("upwrapper").style.display = 'none';
+            document.getElementById("wrapper1_2").style.display = 'block';
+        });
+        function initTimer() {
+            if (timeLeft <= 0) {
+                document.getElementById("gmover").innerHTML = "<b>Game Over! Click Retry.</b>";
+                setTimeout(() => {
+                    document.getElementById("upwrapper").style.display = 'block';
+                    document.getElementById("wrapper1_2").style.display = 'none';
+                    shuffleCard();
+                }, 10000)
+                return clearInterval(timer);
+            }
+            timeLeft--;
+            timeTag.innerText = timeLeft;
+        }
+        function flipCard({ target: clickedCard }) {
+            console.log(111)
+            if (!isPlaying) {
+                isPlaying = true;
+                timer = setInterval(initTimer, 1000);
+            }
+            if (clickedCard !== cardOne && !disableDeck && timeLeft > 0) {
+                flips++;
+                flipsTag.innerText = flips;
+                clickedCard.classList.add("flip");
+                if (!cardOne) {
+                    return (cardOne = clickedCard);
+                }
+                cardTwo = clickedCard;
+                disableDeck = true;
+                let cardOneImg = cardOne.querySelector(".back-view img").src,
+                    cardTwoImg = cardTwo.querySelector(".back-view img").src;
+                matchCards(cardOneImg, cardTwoImg);
+            }
+        }
+        function matchCards(img1, img2) {
+            if (img1 === img2) {
+                matchedCard++;
+                if (matchedCard == 8 && timeLeft > 0) {
+                    document.getElementById("gmwon").innerHTML = "<b>YOU WON! YAY!</b>";
+                    setTimeout(() => {
+                        document.getElementById("upwrapper").style.display = 'block';
+                        document.getElementById("wrapper1_2").style.display = 'none';
+                        shuffleCard();
+                    }, 10000)
+                    return clearInterval(timer);
+                }
+                cardOne.removeEventListener("click", flipCard);
+                cardTwo.removeEventListener("click", flipCard);
+                cardOne = cardTwo = "";
+                return (disableDeck = false);
+            }
+            setTimeout(() => {
+                cardOne.classList.add("shake");
+                cardTwo.classList.add("shake");
+            }, 400);
+            setTimeout(() => {
+                cardOne.classList.remove("shake", "flip");
+                cardTwo.classList.remove("shake", "flip");
+                cardOne = cardTwo = "";
+                disableDeck = false;
+            }, 1200);
+        }
+        function shuffleCard() {
+            timeLeft = maxTime;
+            flips = matchedCard = 0;
+            cardOne = cardTwo = "";
+            clearInterval(timer);
+            timeTag.innerText = timeLeft;
+            flipsTag.innerText = flips;
+            disableDeck = isPlaying = false;
+            document.getElementById("gmover").innerHTML = "";
+            document.getElementById("gmwon").innerHTML = "";
+            // let arr = [1, 2, 3, 4, 5, 6, 7,8, 1, 2, 3, 4, 5, 6, 7,8];
+            arr.sort(() => (Math.random() > 0.5 ? 1 : -1));
+            cards.forEach((card1_2, i) => {
+                card1_2.classList.remove("flip");
+                let imgTag = card1_2.querySelector(".back-view img");
+                setTimeout(() => {
+                    //    imgTag.src = `images/img-${arr[index]}.png`;
+                    imgTag.src = arr1[arr[i]];
+                }, 500);
+                card1_2.addEventListener("click", flipCard);
+            });
+        }
+        shuffleCard();
+        refreshBtn.addEventListener("click", shuffleCard);
+        cards.forEach((card1_2) => {
+            card1_2.addEventListener("click", flipCard);
+        });
+    </script>
+</body>
+
+</html>
